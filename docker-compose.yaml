@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    environment:
+      - discovery.type=single-node
+  testenv:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      - OPENSEARCH_HOST=opensearch:9200
