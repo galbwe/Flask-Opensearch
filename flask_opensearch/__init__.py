@@ -1,4 +1,4 @@
-from .flask_opensearch import FlaskOpensearch
+from .flask_opensearch import FlaskOpenSearch
 
 
-__all__ = ['FlaskOpensearch']
+__all__ = ['FlaskOpenSearch']

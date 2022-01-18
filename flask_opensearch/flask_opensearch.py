@@ -1,4 +1,4 @@
-from opensearchpy import Opensearch
+from opensearchpy import OpenSearch
 
 
 # Find the stack on which we want to store the database connection.
@@ -13,17 +13,24 @@ except ImportError:
 # TODO: switch to current_app instead of self.app to support multiple applications running in the same process
 # TODO: instantiate AWSRequestsAuth if OPENSEARCH_HTTP_AUTH is not set
 
-class FlaskOpensearch:
+class FlaskOpenSearch:
     def __init__(self, app=None, **kwargs):
         self.app = app
+        self.opensearch_options = kwargs
         if app is not None:
             self.init_app(app, **kwargs)
 
     def init_app(self, app, **kwargs):
-        app.config.setdefault('OPENSEARCH_HOST', 'localhost:9200')
-        app.config.setdefault('OPENSEARCH_HTTP_AUTH', None)
+        host = app.config.get('OPENSEARCH_HOST', 'localhost')
+        port = app.config.setdefault("OPENSEARCH_PORT", 9200)
+        app.config.setdefault("OPENSEARCH_HOST_OBJECTS", [{'host': host, 'port': port}])
+        user = app.config.get("OPENSEARCH_USERNAME", "admin")
+        password = app.config.get("OPENSEARCH_PASSWORD", "admin")
+        http_auth = (user, password)
+        app.config.setdefault("OPENSEARCH_HTTP_AUTH", http_auth)
 
-        self.opensearch_options = kwargs
+        for (key, value) in kwargs.items():
+            self.opensearch_options[key] = value
 
         # Use the newstyle teardown_appcontext if it's available,
         # otherwise fall back to the request context
@@ -36,11 +43,8 @@ class FlaskOpensearch:
         ctx = stack.top
         if ctx is not None:
             if not hasattr(ctx, 'opensearch'):
-                if isinstance(ctx.app.config.get('OPENSEARCH_HOST'), str):
-                    hosts = [ctx.app.config.get('OPENSEARCH_HOST')]
-                elif isinstance(ctx.app.config.get('OPENSEARCH_HOST'), list):
-                    hosts = ctx.app.config.get('OPENSEARCH_HOST')
-                ctx.opensearch = Opensearch(hosts=hosts,
+                hosts = ctx.app.config.get('OPENSEARCH_HOST_OBJECTS')
+                ctx.opensearch = OpenSearch(hosts=hosts,
                                             http_auth=ctx.app.config.get('OPENSEARCH_HTTP_AUTH'),
                                             **self.opensearch_options)
 
