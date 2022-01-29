@@ -34,6 +34,11 @@ jobs:
         OPENSEARCH_USER: admin
         OPENSEARCH_PASSWORD: admin
         OPENSEARCH_PORT: 9200
-        PYTHONPATH: /flask_opensearch
+        PYTHONPATH: ./flask_opensearch
       run: |
+        echo $OPENSEARCH_HOST
+        echo $OPENSEARCH_USER
+        echo $OPENSEARCH_PASSWORD
+        echo $OPENSEARCH_PORT
+        echo $PYTHONPATH
         pytest -vvv
