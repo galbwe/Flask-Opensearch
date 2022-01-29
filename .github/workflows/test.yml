@@ -4,6 +4,14 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    services:
+      opensearch:
+        image: opensearchproject/opensearch:1.0.0
+        env:
+          discovery.type: single-node
+        ports:
+          - 9200:9200
+          - 9600:9600
     strategy:
       fail-fast: false
       matrix:
@@ -20,14 +28,12 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install -e .
         python -m pip install pytest
-    - name: Start opensearch in a docker container
-      run: |
-        docker compose up --build -d opensearch
     - name: Test with pytest
+      env:
+        OPENSEARCH_HOST: opensearch
+        OPENSEARCH_USER: admin
+        OPENSEARCH_PASSWORD: admin
+        OPENSEARCH_PORT: 9200
+        PYTHONPATH: /flask_opensearch
       run: |
-        export OPENSEARCH_HOST=localhost
-        export OPENSEARCH_USER=admin
-        export OPENSEARCH_PASSWORD=admin
-        export OPENSEARCH_PORT=9200
-        export PYTHONPATH=/flask_opensearch
         pytest -vvv
