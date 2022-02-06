@@ -35,6 +35,14 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install -e .
         python -m pip install pytest
+        python -m pip install black
+        python -m pip install flake8
+    - name: Check code style
+      run: |
+        black ./flask_opensearch/ ./tests ./scripts -l 120 --check
+    - name: Lint
+      run: |
+        flake8 ./flask_opensearch/ ./tests ./scripts
     - name: Test with pytest
       env:
         OPENSEARCH_HOST: localhost
@@ -43,5 +51,5 @@ jobs:
         OPENSEARCH_PORT: 9200
         PYTHONPATH: ./flask_opensearch
       run: |
-        python ./scripts/wait_for_opensearch.py --skip-prompts
+        python ./scripts/wait_for_opensearch.py --skip-prompts --number-tries=10
         pytest -vvv
