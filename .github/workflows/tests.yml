@@ -36,9 +36,13 @@ jobs:
         python -m pip install -e .
         python -m pip install pytest
         python -m pip install black
+        python -m pip install flake8
     - name: Check code style
       run: |
         black ./flask_opensearch/ ./tests ./scripts -l 120 --check
+    - name: Lint
+      run: |
+        flake8 ./flask_opensearch/ ./tests ./scripts
     - name: Test with pytest
       env:
         OPENSEARCH_HOST: localhost
