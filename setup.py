@@ -3,18 +3,26 @@ Flask-Opensearch
 -------------
 Flask extension for Opensearch integration.
 """
+import os
 from setuptools import setup
+
+
+VERSION = "1.0.0"
+
+
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
 setup(
     name='Flask-Opensearch',
-    version='0.0.0',
+    version=VERSION,
     url='https://github.com/galbwe/Flask-Opensearch',
     license='MIT',
     author='Wes Galbraith',
     author_email='galbwe92@gmail.com',
     description='Flask extension for opensearch integration',
-    long_description=__doc__,
+    long_description=read("README.md"),
     py_modules=['flask_opensearch'],
     zip_safe=False,
     include_package_data=True,
