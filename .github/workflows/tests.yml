@@ -1,11 +1,13 @@
-name: Pull Request
+name: Tests
 
 on:
   pull_request:
-    types: [opened, reopened]
+    branches:
+      - main
+  push:
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     services:
       opensearch:
