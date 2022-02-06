@@ -47,5 +47,5 @@ jobs:
         OPENSEARCH_PORT: 9200
         PYTHONPATH: ./flask_opensearch
       run: |
-        python ./scripts/wait_for_opensearch.py --skip-prompts
+        python ./scripts/wait_for_opensearch.py --skip-prompts --number-tries=10
         pytest -vvv
