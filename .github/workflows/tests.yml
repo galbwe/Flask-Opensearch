@@ -1,8 +1,15 @@
 name: Tests
-on: [push]
-jobs:
-  build:
 
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
     runs-on: ubuntu-latest
     services:
       opensearch:
