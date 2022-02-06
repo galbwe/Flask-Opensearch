@@ -14,14 +14,14 @@ def test_local_docker_opensearch_connection():
     # check that a connection can be made to the local cluster running in docker compose
     host = os.environ.get("OPENSEARCH_HOST", "localhost")
     port = os.environ.get("OPENSEARCH_PORT", 9200)
-    auth = ('admin', 'admin')
+    auth = ("admin", "admin")
     opensearch = OpenSearch(
-        hosts = [{'host': host, 'port': port}],
-        http_auth = auth,
-        use_ssl = True,
-        verify_certs = False,
-        ssl_assert_hostname = False,
-        ssl_show_warn = False,
+        hosts=[{"host": host, "port": port}],
+        http_auth=auth,
+        use_ssl=True,
+        verify_certs=False,
+        ssl_assert_hostname=False,
+        ssl_show_warn=False,
     )
     assert opensearch.ping() is True
 
@@ -73,12 +73,12 @@ class TestInitApp:
             use_ssl=False,
             verify_certs=False,
         )
-        assert opensearch.opensearch_options['use_ssl'] is False
-        assert opensearch.opensearch_options['verify_certs'] is False
+        assert opensearch.opensearch_options["use_ssl"] is False
+        assert opensearch.opensearch_options["verify_certs"] is False
         with pytest.raises(KeyError):
-            opensearch.opensearch_options['ssl_assert_hostname']
+            opensearch.opensearch_options["ssl_assert_hostname"]
         with pytest.raises(KeyError):
-            opensearch.opensearch_options['ssl_show_warn']
+            opensearch.opensearch_options["ssl_show_warn"]
         with app.app_context():
             opensearch.init_app(
                 app,
@@ -87,10 +87,12 @@ class TestInitApp:
                 ssl_assert_hostname=False,
                 ssl_show_warn=False,
             )
-            assert opensearch.opensearch_options['use_ssl'] is True
-            assert opensearch.opensearch_options['verify_certs'] is False
-            assert opensearch.opensearch_options['ssl_assert_hostname'] is False
-            assert opensearch.opensearch_options['ssl_show_warn'] is False
+            assert opensearch.opensearch_options["use_ssl"] is True
+            assert opensearch.opensearch_options["verify_certs"] is False
+            assert opensearch.opensearch_options["ssl_assert_hostname"] is False
+            assert opensearch.opensearch_options["ssl_show_warn"] is False
 
             assert opensearch.ping() is True
+
+
 # TODO: test against an AWS opensearch instance
