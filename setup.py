@@ -23,6 +23,7 @@ setup(
     author_email='galbwe92@gmail.com',
     description='Flask extension for opensearch integration',
     long_description=read("README.md"),
+    long_description_content_type="text/markdown",
     py_modules=['flask_opensearch'],
     zip_safe=False,
     include_package_data=True,
