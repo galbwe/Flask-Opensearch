@@ -1,5 +1,3 @@
-*Currently under development*
-
 # Flask Opensearch
 
 A minimal flask extension that provides compatibility with the opensearch python client.

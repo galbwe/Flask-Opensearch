@@ -36,7 +36,9 @@ def test_readme_example():
                 }
             },
         )
-        assert res_1 == {"acknowledged": True, "shards_acknowledged": True, "index": "test-index"}
+        assert res_1["acknowledged"] is True
+        assert res_1["shards_acknowledged"] is True
+        assert res_1["index"] == "test-index"
 
         # add a document to the index
         res_2 = opensearch.index(
@@ -45,17 +47,10 @@ def test_readme_example():
             id="1",
             refresh=True,
         )
-        assert res_2 == {
-            "_index": "test-index",
-            "_type": "_doc",
-            "_id": "1",
-            "_version": 1,
-            "result": "created",
-            "forced_refresh": True,
-            "_shards": {"total": 2, "successful": 1, "failed": 0},
-            "_seq_no": 0,
-            "_primary_term": 1,
-        }
+        assert res_2["_index"] == "test-index"
+        assert res_2["_type"] == "_doc"
+        assert res_2["_id"] == "1"
+        assert res_2["result"] == "created"
 
         # search the index
         res_3 = opensearch.search(
@@ -79,6 +74,17 @@ def test_readme_example():
                 ],
             },
         }
+        assert res_3["timed_out"] is False
+        assert res_3["hits"]["total"]["value"] == 1
+        assert res_3["hits"]["total"]["relation"] == "eq"
+        assert res_3["hits"]["hits"][0]["_index"] == "test-index"
+        assert res_3["hits"]["hits"][0]["_type"] == "_doc"
+        assert res_3["hits"]["hits"][0]["_id"] == "1"
+        assert res_3["hits"]["hits"][0]["_source"] == {
+            "title": "Moneyball",
+            "director": "Bennett Miller",
+            "year": "2011",
+        }
 
         # delete the document
         res_4 = opensearch.delete(
@@ -95,6 +101,10 @@ def test_readme_example():
             "_seq_no": 1,
             "_primary_term": 1,
         }
+        assert res_4["_index"] == "test-index"
+        assert res_4["_type"] == "_doc"
+        assert res_4["_id"] == "1"
+        assert res_4["result"] == "deleted"
 
         # delete the index
         res_5 = opensearch.indices.delete(
