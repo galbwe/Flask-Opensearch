@@ -10,7 +10,7 @@ RUN apt-get update --yes \
 
 WORKDIR /app
 
-COPY ./flask_opensearch/ ./
+COPY ./flask_opensearch/ ./flask_opensearch/
 COPY ./tests ./
 COPY ./README.md ./
 COPY setup.py ./
