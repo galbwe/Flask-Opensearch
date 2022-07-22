@@ -11,8 +11,7 @@ services:
   example_flaskapp:
     build: .
     volumes:
-      - ./src:/app
-      - ./data:/data
+      ["./src:/app", "./data:/data"]
     ports:
       - 5000:5000
     environment:
