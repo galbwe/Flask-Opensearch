@@ -47,9 +47,9 @@ opensearch = FlaskOpenSearch(
 )
 
 
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
+@app.route("/healthcheck")
+def healthcheck():
+    return "healthy"
 
 
 @app.route("/movies")
