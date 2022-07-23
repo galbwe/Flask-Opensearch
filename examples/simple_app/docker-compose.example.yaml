@@ -20,3 +20,4 @@ services:
       - OPENSEARCH_PASSWORD=admin
       - OPENSEARCH_PORT=9200
       - PYTHONPATH=/app
+      - LOG_LEVEL=debug
