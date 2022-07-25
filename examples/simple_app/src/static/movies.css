@@ -84,4 +84,7 @@ form .form-submit button {
     border-radius: 5px;;
     width: 30%;
     height: 40px;
+
+    font-family: sans-serif;
+    font-size: 20px;
 }
