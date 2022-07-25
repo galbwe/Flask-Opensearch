@@ -5,23 +5,29 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Example Opensearch App</title>
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='movies.css') }}">
 </head>
 <body>
-    <h1>Search Movies</h1>
+    <header class="header">
+        <h1 class="header-text header-large">Find A Flick</h1>
+    </header>
 
     <form action="/movies" method="post">
-        <div>
+        <div class="form-field">
+            <label for="search">Search</label>
             <input required type="text" minlength="1" maxlength="200" id="search" name="search" value="{{query.search}}">
         </div>
-        <div>
+        <div class="form-field">
+            <label for="search">Count</label>
             <input required type="number" id="count" name="count" min="1" max="50" value="{{query.count}}">
         </div>
-        <div>
+        <div class="form-submit">
             <button>GO</button>
         </div>
     </form>
 
-    <ul>
+    <ul class="search-results">
         {% for movie in movies %}
             <li>{{ movie.title }}</li>
         {% endfor %}
