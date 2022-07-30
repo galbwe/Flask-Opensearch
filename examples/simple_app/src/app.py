@@ -52,7 +52,7 @@ def healthcheck():
     return "healthy"
 
 
-@app.route("/movies", methods=['GET', 'POST'])
+@app.route("/movies", methods=["GET", "POST"])
 def movies():
     if request.method == "POST":
         search = request.form["search"]
@@ -80,6 +80,33 @@ def list_movies():
     return jsonify(_search_movies(search, count))
 
 
+API_DATA_MODEL = {
+    "adult": bool,
+    "belongs_to_collection": eval,
+    "budget": int,
+    "genres": eval,
+    "homepage": str,
+    "id": int,
+    "imdb_id": str,
+    "original_language": str,
+    "overview": str,
+    "popularity": float,
+    "poster_path": str,
+    "production_companies": eval,
+    "production_countries": eval,
+    "release_date": str,
+    "revenue": int,
+    "runtime": float,
+    "spoken_languages": eval,
+    "status": str,
+    "tagline": str,
+    "title": str,
+    "video": bool,
+    "vote_average": float,
+    "vote_count": int,
+}
+
+
 def _search_movies(search, count=5):
     response = opensearch.search(
         body={
@@ -87,6 +114,43 @@ def _search_movies(search, count=5):
             "query": {"multi_match": {"query": search, "fields": ["title", "original_title", "overview"]}},
         }
     )
+
+    movies = []
+
+    hits = response["hits"]["hits"]
+    for hit in hits:
+        source = hit.get("_source")
+        if source is None:
+            app.logger.error(f"Unexpected json shape from opensource\n hit: {hit}.")
+            continue
+
+        movie = {}
+        missing_fields = []
+        for field, parse in API_DATA_MODEL.items():
+            value = source.get(field)
+            if value is not None:
+                try:
+                    movie[field] = parse(value)
+                except Exception as e:
+                    movie[field] = None
+                    app.logger.error(
+                        f"Failed to parse field:\n field: {field}\n value: {source[field]}\n parser: {parse}"
+                    )
+                    app.logger.error(e)
+            else:
+                movie[field] = None
+                missing_fields.append(field)
+
+            if missing_fields:
+                app.logger.error(f"Missing fields {', '.join(missing_fields)} in opensearch response\n hit: {hit}")
+                app.logger.error(f"hit: {hit}")
+
+            movies.append(movie)
+
+    return movies
+
+    # deserialize json string fields
+
     return [x["_source"] for x in response["hits"]["hits"]]
 
 

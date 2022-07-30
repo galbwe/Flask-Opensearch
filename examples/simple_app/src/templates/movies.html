@@ -27,10 +27,13 @@
         </div>
     </form>
 
-    <ul class="search-results">
+    <div class="movies-list">
         {% for movie in movies %}
-            <li>{{ movie.title }}</li>
+            <div class="movie">
+                <h3>{{ movie.title }}</h3>
+                <a target="_blank" href="https://imdb.com/title/{{ movie.imdb_id }}">IMDB</a>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
 </body>
 </html>
