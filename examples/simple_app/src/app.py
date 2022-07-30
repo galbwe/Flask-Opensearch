@@ -145,13 +145,9 @@ def _search_movies(search, count=5):
                 app.logger.error(f"Missing fields {', '.join(missing_fields)} in opensearch response\n hit: {hit}")
                 app.logger.error(f"hit: {hit}")
 
-            movies.append(movie)
+        movies.append(movie)
 
     return movies
-
-    # deserialize json string fields
-
-    return [x["_source"] for x in response["hits"]["hits"]]
 
 
 @app.cli.command("load-opensearch")
