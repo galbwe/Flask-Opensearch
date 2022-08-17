@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Example Opensearch App</title>
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='movies.css') }}">
+</head>
+<body>
+    <header class="header">
+        <h1 class="header-text header-large">Find A Flick</h1>
+    </header>
+
+    <form action="/movies" method="post">
+        <div class="form-field">
+            <label for="search">Search</label>
+            <input required type="text" minlength="1" maxlength="200" id="search" name="search" value="{{query.search}}">
+        </div>
+        <div class="form-field">
+            <label for="search">Count</label>
+            <input required type="number" id="count" name="count" min="1" max="50" value="{{query.count}}">
+        </div>
+        <div class="form-submit">
+            <button>Go!</button>
+        </div>
+    </form>
+
+    {% for movie in movies %}
+        <div class="movie">
+            <h3 class="movie-title">{{ movie.title }} - {{ movie.release_date.split("-")[0] }}</h3>
+            <div class="movie-details">
+                <span class="movie-detail">{{ movie.original_language.upper() }}</span>
+                {% if movie.runtime and movie.runtime > 0 %}
+                    <span class="movie-detail">{{ movie.runtime|int }} min</span>
+                {% endif %}
+                <a class="movie-detail" target="_blank" href="https://imdb.com/title/{{ movie.imdb_id }}">IMDB</a>
+                {% if movie.homepage %}
+                    <a class="movie-detail" target="_blank" href="{{ movie.homepage }}">Homepage</a>
+                {% endif %}
+                <div class="movie-genres">
+                    {% for genre in movie.genres %}
+                        <span class="genre">{{ genre.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</body>
+</html>

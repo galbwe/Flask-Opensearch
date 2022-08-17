@@ -5,7 +5,7 @@ from logging.config import dictConfig
 
 import opensearchpy
 from alive_progress import alive_bar
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_opensearch import FlaskOpenSearch
 
 
@@ -25,7 +25,7 @@ dictConfig(
                 "formatter": "default",
             }
         },
-        "root": {"level": "INFO", "handlers": ["wsgi"]},
+        "root": {"level": os.environ.get("LOG_LEVEL", "INFO").upper(), "handlers": ["wsgi"]},
     }
 )
 
@@ -52,7 +52,27 @@ def healthcheck():
     return "healthy"
 
 
-@app.route("/movies")
+@app.route("/movies", methods=["GET", "POST"])
+def movies():
+    if request.method == "POST":
+        search = request.form["search"]
+        count = int(request.form["count"])
+    else:
+        search = "avatar"
+        count = 5
+
+    query = {
+        "search": search,
+        "count": count,
+    }
+    movies = _search_movies(search, count)
+
+    app.logger.info(f"query: {query}")
+    app.logger.info(f"movies: {movies}")
+    return render_template("movies.html", movies=movies, query=query)
+
+
+@app.route("/api/movies")
 def list_movies():
     search = request.args.get("search", "toy story")
     count = int(request.args.get("count", 5))
@@ -60,18 +80,79 @@ def list_movies():
     return jsonify(_search_movies(search, count))
 
 
-def _search_movies(search, results=5):
+API_DATA_MODEL = {
+    "adult": bool,
+    "belongs_to_collection": eval,
+    "budget": int,
+    "genres": eval,
+    "homepage": str,
+    "id": int,
+    "imdb_id": str,
+    "original_language": str,
+    "overview": str,
+    "popularity": float,
+    "poster_path": str,
+    "production_companies": eval,
+    "production_countries": eval,
+    "release_date": str,
+    "revenue": int,
+    "runtime": float,
+    "spoken_languages": eval,
+    "status": str,
+    "tagline": str,
+    "title": str,
+    "video": bool,
+    "vote_average": float,
+    "vote_count": int,
+}
+
+
+def _search_movies(search, count=5):
     response = opensearch.search(
         body={
-            "size": results,
+            "size": count,
             "query": {"multi_match": {"query": search, "fields": ["title", "original_title", "overview"]}},
         }
     )
-    return [x["_source"] for x in response["hits"]["hits"]]
+
+    movies = []
+
+    hits = response["hits"]["hits"]
+    for hit in hits:
+        source = hit.get("_source")
+        if source is None:
+            app.logger.error(f"Unexpected json shape from opensource\n hit: {hit}.")
+            continue
+
+        movie = {}
+        missing_fields = []
+        for field, parse in API_DATA_MODEL.items():
+            value = source.get(field)
+            if value is not None:
+                try:
+                    movie[field] = parse(value)
+                except Exception as e:
+                    movie[field] = None
+                    app.logger.error(
+                        f"Failed to parse field:\n field: {field}\n value: {source[field]}\n parser: {parse}"
+                    )
+                    app.logger.error(e)
+            else:
+                movie[field] = None
+                missing_fields.append(field)
+
+            if missing_fields:
+                app.logger.error(f"Missing fields {', '.join(missing_fields)} in opensearch response\n hit: {hit}")
+                app.logger.error(f"hit: {hit}")
+
+        movies.append(movie)
+
+    return movies
 
 
 @app.cli.command("load-opensearch")
 def load_opensearch():
+    MOVIE_COUNT = 45466
     print("Load opensearch ...")
     # create index
     print("Creating movies_metadata index")
@@ -91,7 +172,7 @@ def load_opensearch():
 
     # write data
     print("Inserting documents into movies_metadata index")
-    with alive_bar(45466, dual_line=True, title="Loading Movies") as progress_bar:
+    with alive_bar(MOVIE_COUNT, dual_line=True, title="Loading Movies") as progress_bar:
         progress_bar.text = "Loading movies ..."
         with open("/data/movies_metadata.csv", "r") as f:
             reader = csv.DictReader(f)
@@ -107,7 +188,3 @@ def load_opensearch():
                     print(f"Error for movie id {row['id']}: {e}")
                 time.sleep(0.001)
                 progress_bar()
-
-
-if __name__ == "__main__":
-    app.run(debug=True)

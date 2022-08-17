@@ -1,0 +1,158 @@
+body {
+    background-color: #EDDDD4;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+header {
+    justify-self: flex-start;
+
+    height: 120px;
+    width: 100%;
+
+    background-color: #197278;
+    border-bottom: 2px solid 283D3B;
+    border-radius: 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+header h1 {
+    font-family: monospace;
+
+    text-align: center;
+    color: white;
+    font-size: 60px;
+}
+
+form {
+    width: 50%;
+    background-color: #197278;
+    border-radius: 10px;
+
+    margin-top: 20px;
+    padding: 40px 20px;
+}
+
+form .form-field {
+    display: flex;
+    flex-direction: row-reverse;
+    margin-top: 10px;
+
+    gap: 10px;
+}
+
+form .form-field label {
+    font-family: monospace;
+    color: #EDDDD4;
+    font-size: 26px;
+}
+
+form .form-field input {
+    order: -1;
+
+    width: 50%;
+    height: 30px;
+    border-radius: 5px;
+    margin-right: 15%;
+    padding-left: 10px;
+
+    font-family: monospace;
+    font-size: 16px;
+}
+
+form .form-submit {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    margin-top: 40px;
+
+    width: 100%;
+}
+
+form .form-submit button {
+    background-color: #C44536;
+    color: white;
+
+    border: 2px solid #EDDDD4;
+    border-radius: 5px;;
+    width: 30%;
+    height: 40px;
+
+    font-family: sans-serif;
+    font-size: 20px;
+}
+
+.movie {
+    width: 50%;
+    background-color: #197278;
+    border-radius: 10px;
+
+    margin-top: 2px;
+
+    padding: 5px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-evenly;
+    align-items: flex-start;
+}
+
+.movie-title {
+    font-family: monospace;
+
+    text-align: center;
+    color: white;
+    font-size: 20px;
+}
+
+.movie-details {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.movie-detail {
+    font-family: monospace;
+    color: #EDDDD4;
+    font-size: 16px;
+
+    margin-right: 15px;
+}
+
+a.movie-detail {
+    color: #C44536;
+    font-size: 18px;
+    text-decoration: none;
+}
+
+a.movie-detail:hover {
+    color: white;
+}
+
+.movie-genres {
+    justify-self: flex-end;
+}
+
+.genre {
+    font-family: monospace;
+    color: #EDDDD4;
+    font-size: 16px;
+    margin-right: 5px;
+
+    background-color: #046060;
+    padding: 2px 3px;
+    border-radius: 10px;
+    border: 2px solid white;
+}
