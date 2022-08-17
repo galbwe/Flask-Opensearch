@@ -140,3 +140,19 @@ a.movie-detail {
 a.movie-detail:hover {
     color: white;
 }
+
+.movie-genres {
+    justify-self: flex-end;
+}
+
+.genre {
+    font-family: monospace;
+    color: #EDDDD4;
+    font-size: 16px;
+    margin-right: 5px;
+
+    background-color: #C44536;
+    padding: 2px 3px;
+    border-radius: 10px;
+    border: 2px solid white;
+}

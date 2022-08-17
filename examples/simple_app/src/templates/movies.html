@@ -35,13 +35,15 @@
                 {% if movie.runtime and movie.runtime > 0 %}
                     <span class="movie-detail">{{ movie.runtime|int }} min</span>
                 {% endif %}
-                {% if movie.adult %}
-                    <span class="movie-detail">Adult</span>
-                {% endif %}
                 <a class="movie-detail" target="_blank" href="https://imdb.com/title/{{ movie.imdb_id }}">IMDB</a>
                 {% if movie.homepage %}
                     <a class="movie-detail" target="_blank" href="{{ movie.homepage }}">Homepage</a>
                 {% endif %}
+                <div class="movie-genres">
+                    {% for genre in movie.genres %}
+                        <span class="genre">{{ genre.name }}</span>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     {% endfor %}
